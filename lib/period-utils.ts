@@ -74,7 +74,7 @@ export function getPeriodForDate(date: Date): Period {
   const startMonthName = MONTHS_EN[startMonth]
   const endMonthName = MONTHS_EN[endMonth]
 
-  const label = `${startMonthName} 21 - ${endMonthName} 20`
+  const label = `${startMonthName} 21 - ${endMonthName} 20 ${endYear}`
 
   return {
     startDate,
@@ -110,9 +110,12 @@ export function getLastThreePeriods(toDate: Date): Period[] {
   const currentPeriod = getPeriodForDate(toDate)
   const periods: Period[] = [currentPeriod]
 
+  // Get the previous period by going to the 20th of the current period's start month
   let date = new Date(toDate)
   for (let i = 0; i < 2; i++) {
+    // Move to the 20th of the previous month (which is the end of the previous period)
     date.setMonth(date.getMonth() - 1)
+    date.setDate(20)
     periods.unshift(getPeriodForDate(date))
   }
 

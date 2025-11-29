@@ -92,9 +92,10 @@ export default function InspectionsPage() {
     setError("")
 
     try {
-      const periods = getLastThreePeriods(
-        new Date(selectedPeriod.endDate)
-      )
+      // Parse the end date string (YYYY-MM-DD) into a Date object
+      const [year, month, day] = selectedPeriod.endDate.split('-').map(Number)
+      const endDate = new Date(year, month - 1, day)
+      const periods = getLastThreePeriods(endDate)
       const results = await Promise.all(
         periods.map((period) =>
           fetchInspectionGridData(
@@ -249,13 +250,37 @@ export default function InspectionsPage() {
                 ))}
               </div>
             </div>
-            <InspectionsGrid
-              objectives={multiPeriodData[2]?.objectives || []}
-              inspectionTypes={multiPeriodData[2]?.inspectionTypes || []}
-              records={multiPeriodData[2]?.records || []}
-              loading={loading}
-              multiPeriodData={viewMode === "three" ? multiPeriodData : undefined}
-            />
+            {(() => {
+              // Merge objectives and inspection types from all 3 periods
+              const objectivesMap = new Map<number, string>()
+              const inspectionTypesSet = new Set<string>()
+              const allRecords: any[] = []
+
+              multiPeriodData.forEach((periodData) => {
+                periodData.objectives.forEach((obj) => {
+                  objectivesMap.set(obj.id, obj.name)
+                })
+                periodData.inspectionTypes.forEach((type) => {
+                  inspectionTypesSet.add(type)
+                })
+                allRecords.push(...periodData.records)
+              })
+
+              const mergedObjectives = Array.from(objectivesMap)
+                .map(([id, name]) => ({ id, name }))
+                .sort((a, b) => a.id - b.id)
+              const mergedInspectionTypes = Array.from(inspectionTypesSet).sort()
+
+              return (
+                <InspectionsGrid
+                  objectives={mergedObjectives}
+                  inspectionTypes={mergedInspectionTypes}
+                  records={allRecords}
+                  loading={loading}
+                  multiPeriodData={viewMode === "three" ? multiPeriodData : undefined}
+                />
+              )
+            })()}
           </>
         )}
       </div>
