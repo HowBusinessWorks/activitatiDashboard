@@ -34,7 +34,10 @@ export default function SingleContractSelector({
       </label>
       <div className="relative w-full">
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={(e) => {
+            e.stopPropagation()
+            setIsOpen(!isOpen)
+          }}
           className="w-full px-4 py-2 border border-slate-300 rounded-lg text-left bg-white hover:bg-slate-50 transition flex items-center justify-between"
         >
           <span className="text-sm">
