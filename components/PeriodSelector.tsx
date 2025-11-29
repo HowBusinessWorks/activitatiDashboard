@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { ChevronDown } from "lucide-react"
-import { Period, getAvailablePeriods } from "@/lib/period-utils"
+import { Period, getAvailablePeriods, getPeriodForDate } from "@/lib/period-utils"
 
 interface PeriodSelectorProps {
   onPeriodChange: (period: Period) => void
@@ -12,7 +12,17 @@ export default function PeriodSelector({
   selectedPeriod,
 }: PeriodSelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const periods = getAvailablePeriods(new Date(), 24)
+  // Start from Jul 21, 2025 and get periods up to today
+  const minStartDate = new Date(2025, 6, 21) // Jul 21, 2025
+  const today = new Date()
+  const monthsDiff = (today.getFullYear() - minStartDate.getFullYear()) * 12 + (today.getMonth() - minStartDate.getMonth()) + 2
+
+  const allPeriods = getAvailablePeriods(new Date(), Math.max(24, monthsDiff))
+  // Filter to only show periods from Jul 21, 2025 onwards
+  const periods = allPeriods.filter((period) => {
+    const periodStart = new Date(period.startDate)
+    return periodStart >= minStartDate
+  })
 
   return (
     <div>
