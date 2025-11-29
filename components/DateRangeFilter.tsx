@@ -44,7 +44,10 @@ export default function DateRangeFilter({
       </label>
       <div className="relative">
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={(e) => {
+            e.stopPropagation()
+            setIsOpen(!isOpen)
+          }}
           className="w-full px-4 py-2 border border-slate-300 rounded-lg text-left bg-white hover:bg-slate-50 transition flex items-center justify-between"
         >
           <span className="text-sm flex items-center gap-2">
@@ -60,7 +63,9 @@ export default function DateRangeFilter({
         </button>
 
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-1 border border-slate-300 rounded-lg bg-white shadow-lg z-10 p-4 space-y-3">
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+            <div className="absolute top-full left-0 right-0 mt-1 border border-slate-300 rounded-lg bg-white shadow-lg z-50 p-4 space-y-3" onClick={(e) => e.stopPropagation()}>
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">
                 Data Inițială
@@ -94,6 +99,7 @@ export default function DateRangeFilter({
               </button>
             )}
           </div>
+          </>
         )}
       </div>
     </div>

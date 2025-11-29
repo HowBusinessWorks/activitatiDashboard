@@ -97,6 +97,30 @@ export default function InspectionsGrid({
   return (
     <>
       <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-slate-200">
+        {/* Header Summary */}
+        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <p className="text-sm text-slate-600">Total Obiective</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {objectives.length}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-600">Tipuri Inspecții</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {inspectionTypes.length}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-600">Total Inspecții Efectuate</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {records.length}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Table - No horizontal scroll, fits on screen */}
         <div className="w-full">
           <table className="w-full table-fixed">
@@ -232,30 +256,6 @@ export default function InspectionsGrid({
               ))}
             </tbody>
           </table>
-        </div>
-
-        {/* Footer Summary */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200">
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <p className="text-sm text-slate-600">Total Obiective</p>
-              <p className="text-2xl font-bold text-slate-900">
-                {objectives.length}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-slate-600">Tipuri Inspecții</p>
-              <p className="text-2xl font-bold text-slate-900">
-                {inspectionTypes.length}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-slate-600">Total Inspecții Efectuate</p>
-              <p className="text-2xl font-bold text-slate-900">
-                {records.length}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 

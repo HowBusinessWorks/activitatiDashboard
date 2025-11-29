@@ -27,13 +27,6 @@ export default function InspectionDetailModal({
     })
   }
 
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleTimeString("ro-RO", {
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
 
   return (
     <>
@@ -107,9 +100,11 @@ export default function InspectionDetailModal({
                           <p className="font-medium text-slate-900">
                             {formatDate(record.activity_date)}
                           </p>
-                          <p className="text-sm text-slate-500">
-                            {formatTime(record.activity_date)}
-                          </p>
+                          {record.added_by_name && (
+                            <p className="text-sm text-slate-500">
+                              de <span className="font-medium text-slate-700">{record.added_by_name}</span>
+                            </p>
+                          )}
                         </div>
                         <span
                           className={`text-xs font-semibold px-3 py-1 rounded-full ${

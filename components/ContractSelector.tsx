@@ -41,7 +41,10 @@ export default function ContractSelector({
       </label>
       <div className="relative w-full">
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={(e) => {
+            e.stopPropagation()
+            setIsOpen(!isOpen)
+          }}
           className="w-full px-4 py-2 border border-slate-300 rounded-lg text-left bg-white hover:bg-slate-50 transition flex items-center justify-between"
         >
           <span className="text-sm">
@@ -58,7 +61,9 @@ export default function ContractSelector({
         </button>
 
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-1 border border-slate-300 rounded-lg bg-white shadow-lg z-10 min-w-80">
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+            <div className="absolute top-full left-0 right-0 mt-1 border border-slate-300 rounded-lg bg-white shadow-lg z-50 min-w-80" onClick={(e) => e.stopPropagation()}>
             <div className="p-3 space-y-2 max-h-96 overflow-y-auto">
               {contracts.length === 0 ? (
                 <p className="text-sm text-slate-500 text-center py-2">
@@ -104,6 +109,7 @@ export default function ContractSelector({
               )}
             </div>
           </div>
+          </>
         )}
       </div>
     </div>

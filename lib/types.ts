@@ -82,6 +82,7 @@ export type InspectionRecord = {
   contractors: string | null
   verified: boolean
   raw_data_json: Record<string, any> | null
+  added_by_name?: string | null
 }
 
 export type InspectionGridData = {

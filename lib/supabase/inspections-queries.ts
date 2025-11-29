@@ -15,7 +15,7 @@ export async function fetchInspectionGridData(
     const { data, error } = await supabase
       .from("activities")
       .select(
-        "activity_id, objective_id, objective_name, inspection_type, activity_date, contractors, verified, raw_data_json"
+        "activity_id, objective_id, objective_name, inspection_type, activity_date, contractors, verified, raw_data_json, added_by_name"
       )
       .eq("contract_id", contractId)
       .eq("type", "INSPECTION")
