@@ -11,11 +11,11 @@ import Link from "next/link"
 import { getPeriodForDate, getLastThreePeriods, Period } from "@/lib/period-utils"
 
 export default function InspectionsPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [authError, setAuthError] = useState("")
+  const [authPassword, setAuthPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(true)
   const [contracts, setContracts] = useState<Contract[]>([])
-  const [selectedContractId, setSelectedContractId] = useState<string | null>(null)
-  const currentPeriod = getPeriodForDate(new Date())
-  const [selectedPeriod, setSelectedPeriod] = useState<Period>(currentPeriod)
-  const [viewMode, setViewMode] = useState<"single" | "three">("single")
   const [objectives, setObjectives] = useState<any[]>([])
   const [inspectionTypes, setInspectionTypes] = useState<string[]>([])
   const [records, setRecords] = useState<any[]>([])
@@ -25,10 +25,87 @@ export default function InspectionsPage() {
     Array<{ period: Period; objectives: any[]; inspectionTypes: string[]; records: any[] }>
   >([])
 
-  // Fetch contracts on mount
+  // Initialize state with stored values or defaults
+  const getStoredContractId = (): string | null => {
+    if (typeof window === "undefined") return null
+    const stored = sessionStorage.getItem("inspectionsFilters_contractId")
+    return stored || null
+  }
+
+  const getStoredPeriod = (): Period => {
+    if (typeof window === "undefined") return getPeriodForDate(new Date())
+    const stored = sessionStorage.getItem("inspectionsFilters_period")
+    try {
+      return stored ? JSON.parse(stored) : getPeriodForDate(new Date())
+    } catch (e) {
+      return getPeriodForDate(new Date())
+    }
+  }
+
+  const getStoredViewMode = (): "single" | "three" => {
+    if (typeof window === "undefined") return "single"
+    const stored = sessionStorage.getItem("inspectionsFilters_viewMode")
+    return (stored === "single" || stored === "three") ? stored : "single"
+  }
+
+  const [selectedContractId, setSelectedContractId] = useState<string | null>(getStoredContractId())
+  const initialPeriod = getStoredPeriod()
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>(initialPeriod)
+  const [viewMode, setViewMode] = useState<"single" | "three">(getStoredViewMode())
+
+  const handleAuthSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setAuthError("")
+
+    const verifyPassword = async () => {
+      try {
+        const response = await fetch("/api/verify-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: authPassword }),
+        })
+
+        const data = await response.json()
+
+        if (data.valid) {
+          setAuthPassword("")
+          sessionStorage.setItem("dashboardAuth", "true")
+          setIsAuthenticated(true)
+        } else {
+          setAuthError("Invalid password")
+          setAuthPassword("")
+        }
+      } catch (err) {
+        setAuthError("Failed to verify password")
+        setAuthPassword("")
+      }
+    }
+
+    verifyPassword()
+  }
+
+  // Check for existing session on mount
   useEffect(() => {
-    fetchContracts()
+    const storedAuth = sessionStorage.getItem("dashboardAuth")
+    if (storedAuth === "true") {
+      setIsAuthenticated(true)
+    }
+    setIsLoading(false)
   }, [])
+
+  // Save filters to sessionStorage whenever they change
+  useEffect(() => {
+    sessionStorage.setItem("inspectionsFilters_contractId", selectedContractId || "")
+    sessionStorage.setItem("inspectionsFilters_period", JSON.stringify(selectedPeriod))
+    sessionStorage.setItem("inspectionsFilters_viewMode", viewMode)
+  }, [selectedContractId, selectedPeriod, viewMode])
+
+  // Fetch contracts on mount (only if authenticated)
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchContracts()
+    }
+  }, [isAuthenticated])
 
   // Fetch inspection data when contract, period, or view mode changes
   useEffect(() => {
@@ -126,6 +203,53 @@ export default function InspectionsPage() {
     if (!selectedContractId) return "No contract selected"
     const contract = contracts.find((c) => c.id === selectedContractId)
     return contract?.contract_name || "Unknown"
+  }
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 p-4 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-slate-300 border-t-blue-600 rounded-full animate-spin"></div>
+      </main>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 p-4">
+        <div className="max-w-md mx-auto mt-12">
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Inspectii</h1>
+            <p className="text-slate-600 mb-6">Introduceți parola pentru a accesa</p>
+
+            <form onSubmit={handleAuthSubmit} className="space-y-4">
+              <div>
+                <input
+                  type="password"
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  placeholder="Parolă"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  autoFocus
+                />
+              </div>
+
+              {authError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded text-red-800 text-sm">
+                  {authError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition"
+              >
+                Conectare
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+    )
   }
 
   return (

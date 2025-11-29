@@ -18,6 +18,36 @@ export default function DashboardPage() {
   const [contracts, setContracts] = useState<Contract[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
+  // Initialize state with stored values or defaults
+  const getStoredContractIds = (): string[] => {
+    if (typeof window === "undefined") return []
+    const stored = sessionStorage.getItem("dashboardFilters_contractIds")
+    return stored ? JSON.parse(stored) : []
+  }
+
+  const getStoredInspectionTypes = (): string[] => {
+    if (typeof window === "undefined") return []
+    const stored = sessionStorage.getItem("dashboardFilters_inspectionTypes")
+    return stored ? JSON.parse(stored) : []
+  }
+
+  const getStoredStartDate = (): string | null => {
+    if (typeof window === "undefined") return null
+    const stored = sessionStorage.getItem("dashboardFilters_startDate")
+    return stored || null
+  }
+
+  const getStoredEndDate = (): string | null => {
+    if (typeof window === "undefined") return null
+    const stored = sessionStorage.getItem("dashboardFilters_endDate")
+    return stored || null
+  }
+
+  const [selectedContractIds, setSelectedContractIds] = useState<string[]>(getStoredContractIds())
+  const [selectedInspectionTypes, setSelectedInspectionTypes] = useState<string[]>(getStoredInspectionTypes())
+  const [startDate, setStartDate] = useState<string | null>(getStoredStartDate())
+  const [endDate, setEndDate] = useState<string | null>(getStoredEndDate())
+
   // Check for existing session on mount
   useEffect(() => {
     const storedAuth = sessionStorage.getItem("dashboardAuth")
@@ -26,12 +56,6 @@ export default function DashboardPage() {
     }
     setIsLoading(false)
   }, [])
-  const [selectedContractIds, setSelectedContractIds] = useState<string[]>([])
-  const [selectedInspectionTypes, setSelectedInspectionTypes] = useState<
-    string[]
-  >([])
-  const [startDate, setStartDate] = useState<string | null>(null)
-  const [endDate, setEndDate] = useState<string | null>(null)
   const [inspectionCategories, setInspectionCategories] = useState<string[]>([])
   const [issues, setIssues] = useState<Issue[]>([])
   const [loading, setLoading] = useState(false)
@@ -89,6 +113,14 @@ export default function DashboardPage() {
       console.error(err)
     }
   }
+
+  // Save filters to sessionStorage whenever they change
+  useEffect(() => {
+    sessionStorage.setItem("dashboardFilters_contractIds", JSON.stringify(selectedContractIds))
+    sessionStorage.setItem("dashboardFilters_inspectionTypes", JSON.stringify(selectedInspectionTypes))
+    sessionStorage.setItem("dashboardFilters_startDate", startDate || "")
+    sessionStorage.setItem("dashboardFilters_endDate", endDate || "")
+  }, [selectedContractIds, selectedInspectionTypes, startDate, endDate])
 
   // Fetch inspection categories (always, not just when contracts selected)
   useEffect(() => {
