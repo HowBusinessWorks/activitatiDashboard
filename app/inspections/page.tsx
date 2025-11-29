@@ -147,13 +147,13 @@ export default function InspectionsPage() {
                 href="/dashboard"
                 className="px-4 py-2 text-slate-700 hover:bg-slate-100 rounded transition border border-slate-300"
               >
-                Tabla Probleme
+                Probleme
               </Link>
               <Link
                 href="/inspections"
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
               >
-                Tabloul Inspectiilor
+                Inspectii
               </Link>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function InspectionsPage() {
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
-                  1 Perioada
+                  1 Luna
                 </button>
                 <button
                   onClick={() => setViewMode("three")}
@@ -196,7 +196,7 @@ export default function InspectionsPage() {
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
-                  3 Perioade
+                  3 Luni
                 </button>
               </div>
             </div>
