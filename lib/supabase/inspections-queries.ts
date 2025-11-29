@@ -11,13 +11,14 @@ export async function fetchInspectionGridData(
   endDate: string
 ): Promise<InspectionGridData> {
   try {
-    // Query all inspection activities for the contract within the date range
+    // Query only INSPECTION type activities for the contract within the date range
     const { data, error } = await supabase
       .from("activities")
       .select(
         "activity_id, objective_id, objective_name, inspection_type, activity_date, contractors, verified, raw_data_json"
       )
       .eq("contract_id", contractId)
+      .eq("type", "INSPECTION")
       .not("objective_id", "is", null)
       .not("objective_name", "is", null)
       .not("inspection_type", "is", null)
@@ -81,6 +82,7 @@ export async function fetchInspectionDetails(
         "activity_id, objective_id, objective_name, inspection_type, activity_date, contractors, verified, raw_data_json, added_by_name"
       )
       .eq("contract_id", contractId)
+      .eq("type", "INSPECTION")
       .eq("objective_id", objectiveId)
       .eq("inspection_type", inspectionType)
       .gte("activity_date", startDate)
