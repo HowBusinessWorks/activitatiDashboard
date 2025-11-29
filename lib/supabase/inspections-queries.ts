@@ -22,8 +22,8 @@ export async function fetchInspectionGridData(
       .not("objective_id", "is", null)
       .not("objective_name", "is", null)
       .not("inspection_type", "is", null)
-      .gte("activity_date", startDate)
-      .lte("activity_date", endDate)
+      .gte("activity_date", `${startDate}T00:00:00`)
+      .lte("activity_date", `${endDate}T23:59:59`)
       .order("activity_date", { ascending: false })
 
     if (error) throw error
@@ -85,8 +85,8 @@ export async function fetchInspectionDetails(
       .eq("type", "INSPECTION")
       .eq("objective_id", objectiveId)
       .eq("inspection_type", inspectionType)
-      .gte("activity_date", startDate)
-      .lte("activity_date", endDate)
+      .gte("activity_date", `${startDate}T00:00:00`)
+      .lte("activity_date", `${endDate}T23:59:59`)
       .order("activity_date", { ascending: false })
 
     if (error) throw error

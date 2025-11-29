@@ -19,6 +19,9 @@ export default function PeriodSelector({
       <label className="block text-sm font-medium text-slate-700 mb-2">
         Selectați Perioada
       </label>
+      <p className="text-xs text-slate-500 mb-1">
+        {selectedPeriod.startDate} → {selectedPeriod.endDate}
+      </p>
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}

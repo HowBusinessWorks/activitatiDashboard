@@ -228,13 +228,35 @@ export default function InspectionsPage() {
             loading={loading}
           />
         ) : (
-          <InspectionsGrid
-            objectives={multiPeriodData[2]?.objectives || []}
-            inspectionTypes={multiPeriodData[2]?.inspectionTypes || []}
-            records={multiPeriodData[2]?.records || []}
-            loading={loading}
-            multiPeriodData={viewMode === "three" ? multiPeriodData : undefined}
-          />
+          <>
+            <div className="mb-4 space-y-2">
+              <h2 className="text-lg font-semibold text-slate-900">
+                Comparație 3 Perioade:
+              </h2>
+              <div className="flex gap-4">
+                {multiPeriodData.map((data) => (
+                  <div
+                    key={`${data.period.startDate}-${data.period.endDate}`}
+                    className="px-3 py-2 bg-blue-50 border border-blue-200 rounded"
+                  >
+                    <p className="text-sm font-medium text-blue-900">
+                      {data.period.label}
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      {data.period.startDate} → {data.period.endDate}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <InspectionsGrid
+              objectives={multiPeriodData[2]?.objectives || []}
+              inspectionTypes={multiPeriodData[2]?.inspectionTypes || []}
+              records={multiPeriodData[2]?.records || []}
+              loading={loading}
+              multiPeriodData={viewMode === "three" ? multiPeriodData : undefined}
+            />
+          </>
         )}
       </div>
     </main>

@@ -57,11 +57,27 @@ export default function InspectionsGrid({
     objectiveId: number,
     inspectionType: string
   ): InspectionRecord[] => {
-    return records.filter(
-      (record) =>
-        record.objective_id === objectiveId &&
-        record.inspection_type === inspectionType
-    )
+    if (multiPeriodData) {
+      // In multi-period mode, combine records from all periods
+      const allRecords: InspectionRecord[] = []
+      multiPeriodData.forEach((periodData) => {
+        allRecords.push(
+          ...periodData.records.filter(
+            (record) =>
+              record.objective_id === objectiveId &&
+              record.inspection_type === inspectionType
+          )
+        )
+      })
+      return allRecords
+    } else {
+      // In single-period mode, use the records prop
+      return records.filter(
+        (record) =>
+          record.objective_id === objectiveId &&
+          record.inspection_type === inspectionType
+      )
+    }
   }
 
   // Find objective name by ID
@@ -168,19 +184,16 @@ export default function InspectionsGrid({
                                           inspection_type: inspectionType,
                                         })
                                       }
-                                      className="w-5 h-5 text-xs font-bold text-white bg-green-500 hover:bg-green-600 rounded transition cursor-pointer flex items-center justify-center"
+                                      className="w-6 h-6 text-xs font-bold text-white bg-green-500 hover:bg-green-600 rounded transition cursor-pointer flex items-center justify-center"
                                       title={`${periodRecords.length} in ${periodData.period.label}`}
                                     >
-                                      ✓
+                                      {periodRecords.length}
                                     </button>
                                   ) : (
-                                    <div className="w-5 h-5 text-xs text-slate-300">
+                                    <div className="w-6 h-6 text-xs text-slate-300 flex items-center justify-center">
                                       —
                                     </div>
                                   )}
-                                  <span className="text-xs text-slate-600 font-bold">
-                                    {periodRecords.length || "0"}
-                                  </span>
                                 </div>
                               )
                             })}
@@ -196,15 +209,10 @@ export default function InspectionsGrid({
                                     inspection_type: inspectionType,
                                   })
                                 }
-                                className="inline-flex items-center justify-center gap-1 rounded-lg bg-green-200 hover:bg-green-300 transition cursor-pointer group relative shadow-sm hover:shadow-md px-2 py-1"
+                                className="inline-flex items-center justify-center rounded-lg bg-green-500 hover:bg-green-600 transition cursor-pointer group relative shadow-sm hover:shadow-md px-3 py-1 text-white font-bold text-sm"
                                 title={`${cellRecords.length} inspectii efectuate`}
                               >
-                                <span className="text-green-700 font-bold text-lg">
-                                  ✓
-                                </span>
-                                <span className="text-xs font-bold text-green-800">
-                                  {cellRecords.length}
-                                </span>
+                                {cellRecords.length}
                                 {/* Tooltip */}
                                 <div className="absolute bottom-full mb-2 hidden group-hover:block bg-slate-900 text-white text-xs px-3 py-2 rounded whitespace-nowrap z-20 pointer-events-none">
                                   {cellRecords.length} inspectii
