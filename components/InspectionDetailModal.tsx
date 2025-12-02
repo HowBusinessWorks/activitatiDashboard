@@ -41,12 +41,9 @@ export default function InspectionDetailModal({
         <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
           {/* Header */}
           <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900">
-                Detalii Inspecție
-              </h2>
-              <p className="text-slate-600 mt-1">Inspection Details</p>
-            </div>
+            <h2 className="text-2xl font-bold text-slate-900">
+              Detalii Inspecție
+            </h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-slate-100 rounded-lg transition"
@@ -82,7 +79,7 @@ export default function InspectionDetailModal({
             {/* Records List */}
             <div>
               <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                Inregistrari Inspectsii
+                Înregistrări Inspecții
               </h3>
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {records.length === 0 ? (
@@ -106,15 +103,6 @@ export default function InspectionDetailModal({
                             </p>
                           )}
                         </div>
-                        <span
-                          className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                            record.verified
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {record.verified ? "Verificată" : "Neverificată"}
-                        </span>
                       </div>
 
                       <div className="mt-2 pt-2 border-t border-slate-200">

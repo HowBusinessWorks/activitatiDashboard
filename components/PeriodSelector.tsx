@@ -19,10 +19,21 @@ export default function PeriodSelector({
 
   const allPeriods = getAvailablePeriods(new Date(), Math.max(24, monthsDiff))
   // Filter to only show periods from Jul 21, 2025 onwards
-  const periods = allPeriods.filter((period) => {
-    const periodStart = new Date(period.startDate)
-    return periodStart >= minStartDate
-  })
+  const periods = allPeriods
+    .filter((period) => {
+      const periodStart = new Date(period.startDate)
+      return periodStart >= minStartDate
+    })
+    // Remove duplicates based on startDate and endDate
+    .reduce((unique: Period[], period) => {
+      const isDuplicate = unique.some(
+        (p) => p.startDate === period.startDate && p.endDate === period.endDate
+      )
+      if (!isDuplicate) {
+        unique.push(period)
+      }
+      return unique
+    }, [])
 
   return (
     <div>
